@@ -12,8 +12,11 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.25.0",
+    "dotenv": "^14.3.2",
     "emotion-theming": "^11.0.0",
     "framer-motion": "^5.6.0",
+    "fs": "^0.0.1-security",
     "react": "^17.0.2",
     "react-credit-card-input": "^1.1.5",
     "react-dom": "^17.0.2",
@@ -23,6 +26,7 @@
     "react-responsive": "^9.0.0-beta.6",
     "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.0",
+    "reactjs-localstorage": "^1.0.1",
     "styled-components": "^5.3.3",
     "web-vitals": "^2.1.4"
   },
@@ -31,6 +35,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -43,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-app-env": "^1.2.3"
   }
 }

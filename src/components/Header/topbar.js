@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   IconButton,
   Avatar,
@@ -25,11 +25,12 @@ import {
   FiUser,
   FiPieChart,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
-
+import { reactLocalStorage } from "reactjs-localstorage";
+import getUserName from "../Common/index"
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -54,6 +55,8 @@ const MobileNav = (
   const SwitchIcon = useColorModeValue(FaMoon, FaSun);
   const text = useColorModeValue("dark", "light");
   const { toggleColorMode } = useColorMode();
+  const [redirectUrl, setRedirectUrl] = useState("")
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -66,6 +69,8 @@ const MobileNav = (
       justifyContent={{ base: "space-between", md: "flex-end" }}
       {...rest}
     >
+      {redirectUrl !== "" ? (<Redirect to={redirectUrl} />) : ""}
+
       <IconButton
         display={{ base: "flex", md: "none" }}
         onClick={onOpen}
@@ -112,7 +117,7 @@ const MobileNav = (
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{getUserName()}</Text>
                 </VStack>
               </HStack>
             </MenuButton>
@@ -122,9 +127,10 @@ const MobileNav = (
             >
               <MenuItem>Profile</MenuItem>
               <MenuDivider />
-              <Link to="/login">
-                <MenuItem>Sign out</MenuItem>
-              </Link>
+              <MenuItem onClick={(() => {
+                reactLocalStorage.remove("user");
+                setRedirectUrl('/login')
+              })}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

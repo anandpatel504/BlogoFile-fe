@@ -7,12 +7,23 @@ import {
   Stack,
   createIcon,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { FiImage, FiTruck, FiTrendingUp } from "react-icons/fi";
+import {reactLocalStorage} from 'reactjs-localstorage';
+import { useState , useEffect } from "react";
 
 export default function Home() {
+  const [redirectUrl, setRedirectUrl] = useState("")
+  useEffect(() => {
+    const user = reactLocalStorage.getObject("user")
+    console.log(user);
+    if (!user.token) {
+      setRedirectUrl("/login")
+    }
+  })
   return (
     <>
+      {redirectUrl !== ""? (<Redirect to={redirectUrl} />):""}
       <Container maxW={"3xl"}>
         <Stack
           as={Box}

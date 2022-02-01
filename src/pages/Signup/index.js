@@ -16,12 +16,15 @@ import {
   useColorModeValue,
   InputGroup,
   InputRightElement,
+  useToast
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from 'axios'
+import { Link, Redirect } from "react-router-dom";
 import { ColorModeSwitcher } from "../../components/DarkTheme/index";
+import {reactLocalStorage} from 'reactjs-localstorage';
+
 
 const avatars = [
   {
@@ -42,14 +45,76 @@ const avatars = [
 ];
 
 export default function Signup() {
+  const [redirectUrl, setRedirectUrl] = useState("/signup")
+  useEffect(() => {
+    const user = reactLocalStorage.getObject("user")
+    if (user.token) {
+      setRedirectUrl("/")
+    }
+  })
   const [showPassword, setShowPassword] = useState(false);
-  const [cardNumber, setShowcardNumber] = useState("");
-  const [cvc, setcvc] = useState("");
-  const [expiry, setShowexpiry] = useState("");
-
+  const [isloading, setisloading] = useState(false);
+  const [values, setValues] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    password: "",
+  });
+  const toast = useToast()
+  const onSignup = (e) => {
+    e.preventDefault();
+    if (values.fname == "" || values.lname == "" || values.email == "" || values.password == "") {
+      toast({
+        title: "Invalid Details.",
+        description: "Input fields can't be empty.",
+        status: 'error',
+        variant: "left-accent",
+        duration: 9000,
+        isClosable: true,
+        position: 'bottom-right'
+      })
+      return;
+    }
+    setisloading(true)
+    console.log(process.env);
+    axios.post("https://blogofile-api.herokuapp.com" + "/signup", { "name": values.fname + " " + values.lname, "email": values.email, "password": values.password })
+      .then((res) => {
+        console.log(res);
+        if (res.data.status == "success") {
+          setValues({ fname: "", lname: "", email: "", password: "" })
+          toast({
+            title: "Signup Successfully!",
+            description: "Your account has been created.",
+            status: 'success',
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: 'bottom-right'
+          })
+          setTimeout(() => setRedirectUrl('/'), 1000)
+        } else if (res.data.status == 'error') {
+          setisloading(false)
+          toast({
+            title: res.data.message,
+            status: 'error',
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: 'bottom-right'
+          })
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+  const changeHandler = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
   return (
     <Box position={"relative"}>
       <ColorModeSwitcher />
+      <Redirect to={redirectUrl} />
       <Container
         as={SimpleGrid}
         maxW={"7xl"}
@@ -74,8 +139,8 @@ export default function Signup() {
           </Heading>
           <Stack direction={"row"} spacing={4} align={"center"}>
             <AvatarGroup>
-              {avatars.map((avatar) => (
-                <Link to={{ pathname: avatar.githubUrl }} target="_blank">
+              {avatars.map((avatar, index) => (
+                <Link key={index} to={{ pathname: avatar.githubUrl }} target="_blank">
                   <Avatar
                     key={avatar.name}
                     name={avatar.name}
@@ -156,10 +221,13 @@ export default function Signup() {
               to enjoy all of our cool features ✌️!
             </Text>
           </Stack>
-          <Box as={"form"} mt={10}>
+          <Box onSubmit={onSignup} as={"form"} mt={10}>
             <Stack spacing={4}>
               <Input
                 placeholder="Firstname"
+                onChange={changeHandler}
+                name="fname"
+                value={values.fname}
                 bg={useColorModeValue("gray.200", "gray.700")}
                 border={0}
                 color={useColorModeValue("gray.700", "gray.200")}
@@ -169,6 +237,9 @@ export default function Signup() {
               />
               <Input
                 placeholder="Lastname"
+                onChange={changeHandler}
+                name="lname"
+                value={values.lname}
                 bg={useColorModeValue("gray.200", "gray.700")}
                 border={0}
                 color={useColorModeValue("gray.700", "gray.200")}
@@ -178,6 +249,9 @@ export default function Signup() {
               />
               <Input
                 placeholder="Email@gmail.com"
+                value={values.email}
+                onChange={changeHandler}
+                name="email"
                 bg={useColorModeValue("gray.200", "gray.700")}
                 border={0}
                 color={useColorModeValue("gray.700", "gray.200")}
@@ -187,8 +261,11 @@ export default function Signup() {
               />
               <InputGroup>
                 <Input
+                  value={values.password}
                   bg={useColorModeValue("gray.200", "gray.700")}
                   placeholder="Password"
+                  onChange={changeHandler}
+                  name="password"
                   color={useColorModeValue("gray.700", "gray.200")}
                   type={showPassword ? "text" : "password"}
                   _placeholder={{
@@ -208,8 +285,11 @@ export default function Signup() {
               </InputGroup>
             </Stack>
             <Button
+              isLoading={isloading}
+              loadingText="Loging In..."
               fontFamily={"heading"}
               align={"center"}
+              type="submit"
               mt={8}
               w={"full"}
               bgGradient="linear(to-r, red.400,pink.400)"
@@ -221,6 +301,7 @@ export default function Signup() {
             >
               Sign up
             </Button>
+
           </Box>
           {/* </Stack> */}
           <Stack pt={1}>

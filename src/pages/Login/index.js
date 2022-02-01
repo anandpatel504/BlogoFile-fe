@@ -17,13 +17,15 @@ import {
   InputGroup,
   InputRightElement,
   Checkbox,
+  useToast
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import axios from "axios"
 import { Link } from "react-router-dom";
-
+import { reactLocalStorage } from 'reactjs-localstorage';
 import { ColorModeSwitcher } from "../../components/DarkTheme/index";
+import { Redirect } from "react-router-dom";
 
 const avatars = [
   {
@@ -44,10 +46,75 @@ const avatars = [
 ];
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState("")
+  useEffect(() => {
 
+    const user = reactLocalStorage.getObject("user")
+    if (user.token) {
+      setRedirectUrl("/")
+    }
+  })
+  const [showPassword, setShowPassword] = useState(false);
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+  });
+  const [isloading, setLoading] = useState(false)
+  const toast = useToast()
+  const changeHandler = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
+  const onLogin = (event) => {
+    event.preventDefault();
+    if (values.email == "" || values.password == "") {
+      toast({
+        title: "Invalid Details.",
+        description: "Input fields can't be empty.",
+        status: 'error',
+        variant: "left-accent",
+        duration: 9000,
+        isClosable: true,
+        position: 'bottom-right'
+      })
+      return;
+    }
+    console.log(process.env);
+    setLoading(true)
+    axios.post("https://blogofile-api.herokuapp.com" + "/login", { "email": values.email, "password": values.password })
+      .then((res) => {
+        console.log(res);
+        if (res.data.status == "success") {
+          reactLocalStorage.setObject("user", { 'token': res.data.token, 'name': res.data.name })
+          toast({
+            title: "Login Successfully!",
+            description: `Welcome back ${res.data.name}`,
+            status: 'success',
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: 'bottom-right'
+          })
+          setTimeout(() => setRedirectUrl('/'), 1000)
+        } else if (res.data.status == 'error') {
+          setLoading(false)
+          toast({
+            title: res.data.message,
+            status: 'error',
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: 'bottom-right'
+          })
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+
+  }
   return (
     <Box position={"relative"}>
+      {redirectUrl !== "" ? (<Redirect to={redirectUrl} />) : ""}
       <ColorModeSwitcher />
       <Container
         as={SimpleGrid}
@@ -156,12 +223,16 @@ export default function Login() {
               to enjoy all of our cool features ✌️!
             </Text>
           </Stack>
-          <Box as={"form"} mt={10}>
+          <Box onSubmit={onLogin} as={"form"} mt={10}>
+            {/* <form > */}
             <Stack spacing={4}>
               <Input
                 placeholder="Email address"
                 bg={useColorModeValue("gray.200", "gray.700")}
                 border={0}
+                name="email"
+                value={values.email}
+                onChange={changeHandler}
                 color={useColorModeValue("gray.700", "gray.200")}
                 _placeholder={{
                   color: "gray.500",
@@ -170,6 +241,9 @@ export default function Login() {
               <InputGroup>
                 <Input
                   bg={useColorModeValue("gray.200", "gray.700")}
+                  value={values.password}
+                  onChange={changeHandler}
+                  name="password"
                   placeholder="Password"
                   color={useColorModeValue("gray.700", "gray.200")}
                   type={showPassword ? "text" : "password"}
@@ -179,6 +253,7 @@ export default function Login() {
                 />
                 <InputRightElement h={"full"}>
                   <Button
+                    type="button"
                     variant={"ghost"}
                     onClick={() =>
                       setShowPassword((showPassword) => !showPassword)
@@ -203,21 +278,23 @@ export default function Login() {
                 </Stack>
               </Stack>
             </Stack>
-            <Link to="/">
-              <Button
-                fontFamily={"heading"}
-                mt={8}
-                w={"full"}
-                bgGradient="linear(to-r, red.400,pink.400)"
-                color={"white"}
-                _hover={{
-                  bgGradient: "linear(to-r, red.400,pink.400)",
-                  boxShadow: "xl",
-                }}
-              >
-                Sign in
-              </Button>
-            </Link>
+            <Button
+              fontFamily={"heading"}
+              mt={8}
+              isLoading={isloading}
+              loadingText="Loging In..."
+              type="submit"
+              w={"full"}
+              bgGradient="linear(to-r, red.400,pink.400)"
+              color={"white"}
+              _hover={{
+                bgGradient: "linear(to-r, red.400,pink.400)",
+                boxShadow: "xl",
+              }}
+            >
+              Sign in
+            </Button>
+            {/* </form> */}
           </Box>
           <Stack pt={1}>
             <Text
