@@ -16,7 +16,6 @@ export default function Home() {
   const [redirectUrl, setRedirectUrl] = useState("")
   useEffect(() => {
     const user = reactLocalStorage.getObject("user")
-    console.log(user);
     if (!user.token) {
       setRedirectUrl("/login")
     }

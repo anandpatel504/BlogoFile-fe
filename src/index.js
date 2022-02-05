@@ -19,11 +19,11 @@
 import React, { StrictMode } from "react";
 import { render } from "react-dom";
 import App from "./App";
-import { ChakraProvider } from "@chakra-ui/react";
-
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { mode } from '@chakra-ui/theme-tools'
 render(
   <StrictMode>
-    <ChakraProvider>
+    <ChakraProvider >
       <App />
     </ChakraProvider>
   </StrictMode>,

@@ -17,7 +17,8 @@ import {
   InputGroup,
   InputRightElement,
   Checkbox,
-  useToast
+  useToast,
+  Center
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
@@ -26,6 +27,8 @@ import { Link } from "react-router-dom";
 import { reactLocalStorage } from 'reactjs-localstorage';
 import { ColorModeSwitcher } from "../../components/DarkTheme/index";
 import { Redirect } from "react-router-dom";
+import { GoogleLogin } from 'react-google-login';
+import { FcGoogle } from 'react-icons/fc';
 
 const avatars = [
   {
@@ -64,7 +67,9 @@ export default function Login() {
   const changeHandler = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+
   const onLogin = (event) => {
+    toast.closeAll()
     event.preventDefault();
     if (values.email == "" || values.password == "") {
       toast({
@@ -78,11 +83,9 @@ export default function Login() {
       })
       return;
     }
-    console.log(process.env);
     setLoading(true)
-    axios.post("https://blogofile-api.herokuapp.com" + "/login", { "email": values.email, "password": values.password })
+    axios.post(process.env.API_URL + "/login", { "email": values.email, "password": values.password })
       .then((res) => {
-        console.log(res);
         if (res.data.status == "success") {
           reactLocalStorage.setObject("user", { 'token': res.data.token, 'name': res.data.name })
           toast({
@@ -94,7 +97,7 @@ export default function Login() {
             isClosable: true,
             position: 'bottom-right'
           })
-          setTimeout(() => setRedirectUrl('/'), 1000)
+          setRedirectUrl('/')
         } else if (res.data.status == 'error') {
           setLoading(false)
           toast({
@@ -111,6 +114,20 @@ export default function Login() {
         console.log(err);
       })
 
+  }
+  const onGoogleLogin = (event)=>{
+    const name = event.profileObj.givenName+" " +event.profileObj.familyName
+    toast({
+      title: "Login Successfully",
+      description: `Welcome back ${name}`,
+      status: 'success',
+      variant: "left-accent",
+      duration: 9000,
+      isClosable: true,
+      position: 'bottom-right'
+    })
+    reactLocalStorage.setObject("user", { 'token': event.tokenId, 'name': name })
+    setRedirectUrl('/')
   }
   return (
     <Box position={"relative"}>
@@ -294,7 +311,38 @@ export default function Login() {
             >
               Sign in
             </Button>
-            {/* </form> */}
+            <GoogleLogin
+              clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+              render={renderProps => (
+                <Button
+                  onClick={renderProps.onClick}
+                  isLoading={renderProps.disabled}
+                  loadingText="Loading..."
+                  w={'full'}
+                  maxW={'md'}
+                  mt={3}
+                  variant={'outline'}
+                  leftIcon={<FcGoogle />}>
+                  <Center>
+                    <Text>Sign in with Google</Text>
+                  </Center>
+                </Button>)}
+              buttonText="Login"
+              onSuccess={onGoogleLogin}
+              onFailure={(e) => {
+                toast({
+                  title: "Google Login Error",
+                  description: e.error,
+                  status: 'error',
+                  variant: "left-accent",
+                  duration: 9000,
+                  isClosable: true,
+                  position: 'bottom-right'
+                })
+              }}
+              cookiePolicy={'single_host_origin'}
+            />
+            
           </Box>
           <Stack pt={1}>
             <Text

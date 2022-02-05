@@ -62,6 +62,7 @@ export default function Signup() {
   });
   const toast = useToast()
   const onSignup = (e) => {
+    toast.closeAll()
     e.preventDefault();
     if (values.fname == "" || values.lname == "" || values.email == "" || values.password == "") {
       toast({
@@ -76,10 +77,8 @@ export default function Signup() {
       return;
     }
     setisloading(true)
-    console.log(process.env);
-    axios.post("https://blogofile-api.herokuapp.com" + "/signup", { "name": values.fname + " " + values.lname, "email": values.email, "password": values.password })
+    axios.post(process.env.API_URL + "/signup", { "name": values.fname + " " + values.lname, "email": values.email, "password": values.password })
       .then((res) => {
-        console.log(res);
         if (res.data.status == "success") {
           setValues({ fname: "", lname: "", email: "", password: "" })
           toast({
@@ -91,7 +90,7 @@ export default function Signup() {
             isClosable: true,
             position: 'bottom-right'
           })
-          setTimeout(() => setRedirectUrl('/'), 1000)
+          setRedirectUrl('/')
         } else if (res.data.status == 'error') {
           setisloading(false)
           toast({
