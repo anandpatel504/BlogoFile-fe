@@ -12,6 +12,7 @@ import Gallery from "./pages/Gallery/index";
 import ImageWithModal from "./components/Model/upload";
 
 function App() {
+  console.log(process.env);
   return (
     <div>
       <Router>
