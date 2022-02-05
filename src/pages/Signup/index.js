@@ -77,7 +77,7 @@ export default function Signup() {
       return;
     }
     setisloading(true)
-    axios.post(process.env.API_URL + "/signup", { "name": values.fname + " " + values.lname, "email": values.email, "password": values.password })
+    axios.post(process.env.REACT_APP_BACKEND_API_URL + "/signup", { "name": values.fname + " " + values.lname, "email": values.email, "password": values.password })
       .then((res) => {
         if (res.data.status == "success") {
           setValues({ fname: "", lname: "", email: "", password: "" })

@@ -84,7 +84,7 @@ export default function Login() {
       return;
     }
     setLoading(true)
-    axios.post(process.env.API_URL + "/login", { "email": values.email, "password": values.password })
+    axios.post(process.env.REACT_APP_BACKEND_API_URL + "/login", { "email": values.email, "password": values.password })
       .then((res) => {
         if (res.data.status == "success") {
           reactLocalStorage.setObject("user", { 'token': res.data.token, 'name': res.data.name })
