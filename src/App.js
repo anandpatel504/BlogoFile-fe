@@ -10,6 +10,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFound from "./pages/Errors/404";
 import Gallery from "./pages/Gallery/index";
 import ImageWithModal from "./components/Model/upload";
+import Forgot from "./pages/Forgot";
+import ResetPassword from "./pages/Reset";
 
 function App() {
   console.log(process.env);
@@ -33,6 +35,8 @@ function App() {
           />
           <Route path="/zomato" component={() => <Layout />} />
           <Route path="/upload" component={() => <ImageWithModal />} />
+          <Route path="/forgot_password" component={() => <Forgot />} />
+          <Route path="/reset-password/:token" component={() => <ResetPassword />} />
           <Route
             exact
             path="/"

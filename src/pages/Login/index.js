@@ -288,7 +288,7 @@ export default function Login() {
                   justify={"space-between"}
                 >
                   <Checkbox>Remember me</Checkbox>
-                  <Link color={"blue.400"}>
+                  <Link to={"/forgot_password"} color={"blue.400"}>
                     {" "}
                     <span style={{ color: "#4299E1" }}>Forgot password?</span>
                   </Link>
