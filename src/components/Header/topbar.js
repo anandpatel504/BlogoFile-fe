@@ -39,9 +39,6 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FiHome },
   { name: "Blogs", icon: FiTrendingUp },
   { name: "Gallery", icon: FiImage },
-  { name: "Zomato", icon: FiTruck },
-  { name: "Favourites", icon: FiStar },
-  { name: "Profile", icon: FiUser },
   { name: "About us", icon: FiPieChart },
 ];
 

@@ -30,9 +30,6 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FiHome, url: "/" },
   { name: "Blogs", icon: FiTrendingUp, url: "/blogs" },
   { name: "Gallery", icon: FiImage, url: "/gallery" },
-  { name: "Zomato", icon: FiTruck, url: "/zomato" },
-  { name: "Favourites", icon: FiStar },
-  { name: "Profile", icon: FiUser },
   { name: "About us", icon: FiPieChart, url: "/about" },
 ];
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
