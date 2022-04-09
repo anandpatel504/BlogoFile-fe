@@ -14,6 +14,7 @@ import {
   MenuItem,
   MenuList,
   useColorMode,
+  Button,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -24,13 +25,19 @@ import {
   FiTruck,
   FiUser,
   FiPieChart,
+  FiPlus,
 } from "react-icons/fi";
+
 import { Link, Redirect } from "react-router-dom";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { reactLocalStorage } from "reactjs-localstorage";
-import getUserName from "../Common/index"
+import getUserName from "../Common/index";
+import Dropzone from "../Model/upload";
+import CreateBlog from "../Model/createBlog"
+
+
 interface LinkItemProps {
   name: string;
   icon: IconType;
@@ -52,7 +59,7 @@ const MobileNav = (
   const SwitchIcon = useColorModeValue(FaMoon, FaSun);
   const text = useColorModeValue("dark", "light");
   const { toggleColorMode } = useColorMode();
-  const [redirectUrl, setRedirectUrl] = useState("")
+  const [redirectUrl, setRedirectUrl] = useState("");
 
   return (
     <Flex
@@ -66,7 +73,7 @@ const MobileNav = (
       justifyContent={{ base: "space-between", md: "flex-end" }}
       {...rest}
     >
-      {redirectUrl !== "" ? (<Redirect to={redirectUrl} />) : ""}
+      {redirectUrl !== "" ? <Redirect to={redirectUrl} /> : ""}
 
       <IconButton
         display={{ base: "flex", md: "none" }}
@@ -84,8 +91,18 @@ const MobileNav = (
       >
         BlogoFile
       </Text>
-
       <HStack spacing={{ base: "0", md: "6" }}>
+        {window.location.pathname == "/blogs" ? (
+          <CreateBlog/>
+        ) : (
+          ""
+        )}
+         {window.location.pathname == "/gallery" ? (
+         <Dropzone />
+        ) : (
+          ""
+        )}
+
         <IconButton
           {...props}
           aria-label={`Switch to ${text} mode`}
@@ -124,10 +141,14 @@ const MobileNav = (
             >
               <MenuItem>Profile</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={(() => {
-                reactLocalStorage.remove("user");
-                setRedirectUrl('/login')
-              })}>Sign out</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  reactLocalStorage.remove("user");
+                  setRedirectUrl("/login");
+                }}
+              >
+                Sign out
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>

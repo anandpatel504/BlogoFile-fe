@@ -1,7 +1,7 @@
 import React from "react";
 import Signup from "./pages/Signup/index";
 import Login from "./pages/Login/index";
-import BlogAuthor from "./components/Blogs/index";
+import Blogs from "./pages/Blogs/index";
 import AboutUs from "./pages/AboutUs/index";
 import Footer from "./components/Footer/index";
 import Layout from "./layout/index";
@@ -27,7 +27,7 @@ function App() {
           />
           <Route
             path="/blogs"
-            component={() => <Layout children={<BlogAuthor />} />}
+            component={() => <Layout children={<Blogs />} />}
           />
           <Route
             path="/gallery"

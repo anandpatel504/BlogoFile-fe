@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { PhoneIcon, AddIcon, BellIcon } from "@chakra-ui/icons";
 import { FiImage, FiHeart } from "react-icons/fi";
-import Dropzone from "../../components/Model/upload";
 
 export default function Gallery() {
   const hi = "";
@@ -65,18 +64,6 @@ export default function Gallery() {
   ];
   return (
     <div>
-      <Stack direction="row" spacing={4}>
-        <Text
-          display="flex"
-          fontSize="2xl"
-          fontFamily="monospace"
-          fontWeight="bold"
-        >
-          <FiImage style={{ marginTop: "5px", marginRight: "5px" }} />
-          Gallery
-        </Text>
-        <Dropzone />
-      </Stack>
       <SimpleGrid
         style={{ marginTop: "30px" }}
         minChildWidth="270px"

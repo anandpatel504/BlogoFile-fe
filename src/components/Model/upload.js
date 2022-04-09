@@ -45,9 +45,7 @@ export default function Dropzone({ onFileAccepted }) {
   return (
     <>
       <Button
-        rightIcon={<MdUpload />}
-        colorScheme="green"
-        variant="outline"
+        leftIcon={<MdUpload />}
         style={{ marginLeft: "auto" }}
         onClick={onOpen}
       >
