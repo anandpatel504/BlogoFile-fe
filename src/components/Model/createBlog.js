@@ -80,7 +80,6 @@ export default function CreateBlog({ onFileAccepted }) {
           if (res.data.status == "success") {
             toast({
               title: "Blog created successfully!",
-              description: `Welcome back ${res.data.name}`,
               status: "success",
               variant: "left-accent",
               duration: 9000,

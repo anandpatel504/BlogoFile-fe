@@ -11,6 +11,7 @@ import {
   Container,
   Button,
   Avatar,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
@@ -19,16 +20,74 @@ import { FiDelete, FiTrash } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
 
 export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
+  const toast = useToast();
+  const onDeleteBlog = (e) => {
+    console.log(e);
+    const user = reactLocalStorage.getObject("user")
+    const id = e.target.id;
+    console.log(e.target);
+    if (!id) {
+      return toast({
+        title: "Invalid blog ID.",
+        status: "error",
+        variant: "left-accent",
+        duration: 9000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+    }
+    axios
+      .delete(
+        process.env.REACT_APP_BACKEND_API_URL +
+          "/deleteBlog/"+id+"?token=" +
+          user.token
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.status == "success") {
+          toast({
+            title: "Blog deleted successfully!",
+            status: "success",
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+          window.location.reload();
+        } else {
+          toast({
+            title: res.data.message,
+            status: "error",
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <HStack marginTop="2" spacing="2" display="flex" alignItems="center">
       <Avatar size="sm" name={props.name} />
       <Text fontWeight="medium">{props.name}</Text>
       <Text>—</Text>
-      <Text>{props.date.toLocaleDateString()}{props.user_id}= {props.c_user_id}</Text>
-      {
-        (props.user_id == props.c_user_id) ? <Button style={{marginLeft: "auto"}} colorScheme="red" variant="ghost"><FaTrash /></Button>: ""
-      }
-      
+      <Text>{props.date.toLocaleDateString()}</Text>
+      {props.user_id == props.user_id_real ? (
+        <Button
+          id={props.blog_id}
+          onClick={onDeleteBlog}
+          style={{ marginLeft: "auto" }}
+          colorScheme="red"
+          variant="ghost"
+        >
+          <FaTrash />
+        </Button>
+      ) : (
+        ""
+      )}
     </HStack>
   );
 };
@@ -91,31 +150,7 @@ const Blog: React.FC<BlogAuthorProps> = (props) => {
 };
 
 const ArticleList = () => {
-  
-  const [s_blogs, set_s_blogs] = useState([
-    {
-      title: "The Five Urban Cycling Senses",
-      description:
-        "It’s a touchy-feely thing, urban cycling. It’s physical, organic and a feast for the senses. I’m sure the spandexy dudes get all sensory on their fancy bikes as they measure their watts or whatever they do, but this is about the Five Urban Cycling Senses in a bicycle-friendly city where your bike is your fifth limb — and all the inherent poetry involved in that.",
-      image: "https://miro.medium.com/max/700/1*TbRWKDQzHvDDne_xBa6m5Q.jpeg",
-      name: "Pratik Deshmukh",
-    },
-    {
-      title: "The Power of Defiance in the Age of Trans Bans",
-      description:
-        "Bans on healthcare for trans youth are passing throughout the country. So are bans on trans participation in youth sports, and the acknowledgement of queer people’s existence in classrooms. Until now, I haven’t had the will to write about any of it. Hell, for weeks I could barely bring myself to read very much about these statutes.",
-      image:
-        "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=800&q=80",
-      name: "Anand Patel",
-    },
-    {
-      title: "Stop Telling Women to Work Harder        ",
-      description:
-        "Bans on healthcare for trans youth are passing throughout the country. So are bans on trans participation in youth sports, and the acknowledgement of queer people’s existence in classrooms. Until now, I haven’t had the will to write about any of it. Hell, for weeks I could barely bring myself to read very much about these statutes.",
-      image: "https://miro.medium.com/max/1400/1*g-7QYIMdlrSh7IxsRvqBwA.jpeg",
-      name: "Prakash Simhandri",
-    },
-  ]);
+  const [s_blogs, set_s_blogs] = useState([]);
   useEffect(() => {
     const user = reactLocalStorage.getObject("user");
     axios
@@ -135,7 +170,13 @@ const ArticleList = () => {
         description={item.description}
         image={"https://miro.medium.com/max/700/1*TbRWKDQzHvDDne_xBa6m5Q.jpeg"}
         author={
-          <BlogAuthor user_id={item.user_id} user_id_real={item.c_user_id} name={item.author} date={new Date(item.created_at)} />
+          <BlogAuthor
+            blog_id={item.id}
+            user_id={item.user_id}
+            user_id_real={item.c_user_id}
+            name={item.author}
+            date={new Date(item.created_at)}
+          />
         }
       />
     );
