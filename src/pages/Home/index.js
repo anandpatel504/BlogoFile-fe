@@ -36,15 +36,14 @@ export default function Home() {
             fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
             lineHeight={"110%"}
           >
-            Make money from <br />
+            Start Writing your Blogs <br />
             <Text as={"span"} color={"green.400"}>
-              your audience
+            Share moments with Blogofile :)
             </Text>
           </Heading>
           <Text color={"gray.500"}>
-            Monetize your content by charging your most loyal readers and reward
-            them loyalty points. Give back to your loyal readers by granting
-            them access to your pre-releases and sneak-peaks.
+          Blogofile gives you home for your thoughts!
+          Be it sharing your expressive words or the picture perfect moments. We are here :D
           </Text>
           <Stack
             direction={["column", "row"]}

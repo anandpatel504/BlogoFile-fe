@@ -25,22 +25,26 @@ import { Link, Redirect } from "react-router-dom";
 import { ColorModeSwitcher } from "../../components/DarkTheme/index";
 import {reactLocalStorage} from 'reactjs-localstorage';
 
-
 const avatars = [
   {
-    name: "Pratik Deshmukh",
-    url: "https://avatars.githubusercontent.com/u/44018192?v=4",
-    githubUrl: "https://github.com/pratikdeshmukh2004",
+    name: "Anjali Prajapati",
+    url: "https://avatars.githubusercontent.com/u/100531680?v=4",
+    githubUrl: "https://github.com/iamanjaliprajapati",
   },
   {
-    name: "Anand Patel",
-    url: "https://avatars.githubusercontent.com/u/44016225?v=4",
-    githubUrl: "https://github.com/anandpatel504",
+   name: "Geetika Meena",
+   url: "https://avatars.githubusercontent.com/u/101466812?v=4",
+    githubUrl: "https://github.com/geetikameena21",
   },
   {
-    name: "Anmol Mehara",
-    url: "https://avatars.githubusercontent.com/u/70458652?v=4",
-    githubUrl: "https://github.com/iamanmolmehra",
+    name: "Riya Rathi",
+    url: "https://avatars.githubusercontent.com/u/101453687?v=4",
+    githubUrl: "https://github.com/iamriyarathi",
+  },
+  {
+    name: "Tannu Rawat",
+    url: "https://avatars.githubusercontent.com/u/101473171?v=4",
+    githubUrl: "https://github.com/tannurawat",
   },
 ];
 
@@ -126,15 +130,15 @@ export default function Signup() {
             lineHeight={1.1}
             fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
           >
-            Senior web designers{" "}
+            BLOGOFILE{" "}
             <Text
               as={"span"}
               bgGradient="linear(to-r, red.400,pink.400)"
               bgClip="text"
             >
-              &
+              Discover Stories
             </Text>{" "}
-            Full-Stack Developers
+            .
           </Heading>
           <Stack direction={"row"} spacing={4} align={"center"}>
             <AvatarGroup>
