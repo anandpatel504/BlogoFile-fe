@@ -81,20 +81,6 @@ export default function Home() {
                 Gallery
               </Button>
             </Link>
-            <Link to="/zomato">
-              <Button
-                bg={"red.500"}
-                _hover={{ bg: "red.300" }}
-                rounded={"full"}
-                leftIcon={<FiTruck />}
-                px={6}
-                size="md"
-                height="40px"
-                width="200px"
-              >
-                Zomato
-              </Button>
-            </Link>
           </Stack>
         </Stack>
       </Container>
