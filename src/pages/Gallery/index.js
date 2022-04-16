@@ -17,7 +17,28 @@ import { FiImage, FiHeart } from "react-icons/fi";
 
 export default function Gallery() {
   const hi = "";
-  const images = [];
+  const images = [
+    { url: "https://neilpatel.com/wp-content/uploads/2018/10/blog.jpg", author: "Tannu Rawat" },
+    {
+      url: "http://cdn2.hubspot.net/hub/53/file-23115630-jpg/blog/images/blogging_image.jpg",
+      author: "Anjali P"
+    }, {
+      url: "https://wbcomdesigns.com/wp-content/uploads/2017/01/blog-post-inspiration-for-WordPress.jpg",
+      author: "Anjali P"
+    }, {
+      url: "https://www.iata.org/contentassets/d7c512eb9a704ba2a8056e3186a31921/cargo_live_animals_parrot.jpg",
+      author: "Anjali P"
+
+    }, {
+      url: "https://media.wired.com/photos/593261cab8eb31692072f129/master/pass/85120553.jpg",
+      author: "Anjali P"
+
+    }, {
+      url: "https://thumbs.dreamstime.com/b/animals-harmony-beautiful-sunset-view-peaceful-park-living-collage-59033870.jpg",
+      author: "Anjali P"
+
+    },
+  ]
   return (
     <div>
       <SimpleGrid
@@ -57,7 +78,7 @@ function ImageWithModal({ item }: NavItemProps) {
 
         <Box p="3">
           <Box display="flex" alignItems="baseline">
-            <Text>Posted by NG Lite</Text>
+            <Text>Posted by {item.author}</Text>
             <FiHeart
               w={10}
               h={10}
