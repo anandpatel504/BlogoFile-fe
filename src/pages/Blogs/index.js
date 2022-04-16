@@ -303,7 +303,7 @@ const ArticleList = () => {
       <Blog
         title={item.title}
         description={item.description}
-        image={"https://miro.medium.com/max/700/1*TbRWKDQzHvDDne_xBa6m5Q.jpeg"}
+        image={"https://neilpatel.com/wp-content/uploads/2018/10/blog.jpg"}
         author={<BlogAuthor blog={item} />}
       />
     );
