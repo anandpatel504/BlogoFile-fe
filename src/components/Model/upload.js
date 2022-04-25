@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   Center,
@@ -12,17 +12,76 @@ import {
   useDisclosure,
   Button,
   ModalFooter,
+  useToast,
 } from "@chakra-ui/react";
 import { MdUpload } from "react-icons/md";
 
 import { AiFillFileAdd } from "react-icons/ai";
+import axios from "axios";
+import { reactLocalStorage } from "reactjs-localstorage";
 export default function Dropzone({ onFileAccepted }) {
+  const toast = useToast();
+  const [image, setImage] = useState();
+  const [isloading, setLoading] = useState(false);
+
   const onDrop = useCallback(
     (acceptedFiles) => {
-      onFileAccepted(acceptedFiles[0]);
+      // onFileAccepted(acceptedFiles[0]);
+      console.log(acceptedFiles);
+      setImage(acceptedFiles[0])
     },
-    [onFileAccepted]
+    // [onFileAccepted]
+    []
   );
+
+  const onSubmitForm = ()=>{
+    const user = reactLocalStorage.getObject("user");
+    const data = new FormData() 
+    data.append('myimage', image)
+    if (!image){
+      return toast({
+        title: "Select image to upload",
+        status: "error",
+        variant: "left-accent",
+        duration: 9000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+    }
+    setLoading(true)
+    axios
+    .post(
+      process.env.REACT_APP_BACKEND_API_URL +
+        "/uploadPhoto" +
+        "?token=" +
+        user.token,  data
+    )
+    .then((res) => {
+      if (res.data.status == "success") {
+        toast({
+          title: "Image uploaded on cloud",
+          status: "success",
+          variant: "left-accent",
+          duration: 9000,
+          isClosable: true,
+          position: "bottom-right",
+        });
+        window.location.reload()
+      } else {
+        toast({
+          title: res.data.message,
+          status: "error",
+          variant: "left-accent",
+          duration: 9000,
+          isClosable: true,
+          position: "bottom-right",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -77,14 +136,14 @@ export default function Dropzone({ onFileAccepted }) {
             >
               <input {...getInputProps()} />
               <Icon as={AiFillFileAdd} mr={2} />
-              <p>{dropText}</p>
+              <p>{image? (image?.name+" | "+(image?.size/1000000).toFixed(3))+" MB" :dropText}</p>
             </Center>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="red" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button colorScheme="green">Upload Image</Button>
+            <Button onClick={onSubmitForm} isLoading={isloading} loadingText="Uploading image." colorScheme="green">Upload Image</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

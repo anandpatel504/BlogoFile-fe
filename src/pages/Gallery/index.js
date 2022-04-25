@@ -11,34 +11,46 @@ import {
   ModalContent,
   ModalBody,
   ModalCloseButton,
+  useToast,
 } from "@chakra-ui/react";
 import { PhoneIcon, AddIcon, BellIcon } from "@chakra-ui/icons";
 import { FiImage, FiHeart } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { reactLocalStorage } from "reactjs-localstorage";
 
 export default function Gallery() {
+  const toast = useToast();
   const hi = "";
-  const images = [
-    { url: "https://neilpatel.com/wp-content/uploads/2018/10/blog.jpg", author: "Tannu Rawat" },
-    {
-      url: "http://cdn2.hubspot.net/hub/53/file-23115630-jpg/blog/images/blogging_image.jpg",
-      author: "Anjali P"
-    }, {
-      url: "https://wbcomdesigns.com/wp-content/uploads/2017/01/blog-post-inspiration-for-WordPress.jpg",
-      author: "Anjali P"
-    }, {
-      url: "https://www.iata.org/contentassets/d7c512eb9a704ba2a8056e3186a31921/cargo_live_animals_parrot.jpg",
-      author: "Anjali P"
-
-    }, {
-      url: "https://media.wired.com/photos/593261cab8eb31692072f129/master/pass/85120553.jpg",
-      author: "Anjali P"
-
-    }, {
-      url: "https://thumbs.dreamstime.com/b/animals-harmony-beautiful-sunset-view-peaceful-park-living-collage-59033870.jpg",
-      author: "Anjali P"
-
-    },
-  ]
+  const [images, setImages] = useState([]);
+  useEffect(() => {
+    const user = reactLocalStorage.getObject("user");
+    axios
+      .get(
+        process.env.REACT_APP_BACKEND_API_URL +
+          "/photos" +
+          "?token=" +
+          user.token
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.status == "success") {
+          setImages(res.data.data)
+        } else {
+          toast({
+            title: res.data.message,
+            status: "error",
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <div>
       <SimpleGrid
@@ -78,7 +90,7 @@ function ImageWithModal({ item }: NavItemProps) {
 
         <Box p="3">
           <Box display="flex" alignItems="baseline">
-            <Text>Posted by {item.author}</Text>
+            <Text>Posted by {item.user_id}</Text>
             <FiHeart
               w={10}
               h={10}
