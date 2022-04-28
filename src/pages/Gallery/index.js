@@ -90,7 +90,7 @@ function ImageWithModal({ item }: NavItemProps) {
 
         <Box p="3">
           <Box display="flex" alignItems="baseline">
-            <Text>Posted by {item.user_id}</Text>
+            <Text>Posted by {item.users.name}</Text>
             <FiHeart
               w={10}
               h={10}
