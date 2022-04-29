@@ -76,7 +76,6 @@ export default function CreateBlog({ onFileAccepted }) {
           author: user.name
         })
         .then((res) => {
-          console.log(res);
           if (res.data.status == "success") {
             toast({
               title: "Blog created successfully!",

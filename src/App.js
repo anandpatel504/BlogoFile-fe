@@ -14,7 +14,6 @@ import Forgot from "./pages/Forgot";
 import ResetPassword from "./pages/Reset";
 
 function App() {
-  console.log(process.env);
   return (
     <div>
       <Router>
