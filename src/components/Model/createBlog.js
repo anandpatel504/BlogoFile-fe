@@ -120,12 +120,24 @@ export default function CreateBlog({ onFileAccepted }) {
     <>
       <Button
         leftIcon={<FiPlus />}
+        overflow="hidden"
+        display={{base: "none", md: "block"}}
         onClick={() => {
           setOverlay(<OverlayOne />);
           onOpen();
         }}
       >
         Create Blog
+      </Button>
+      <Button
+        leftIcon={<FiPlus />}
+        overflow="hidden"
+        display={{base: "block", md: "none"}}
+        onClick={() => {
+          setOverlay(<OverlayOne />);
+          onOpen();
+        }}
+      >
       </Button>
       <Modal isCentered isOpen={isOpen} size="4xl" onClose={onClose}>
         {overlay}
@@ -155,7 +167,7 @@ export default function CreateBlog({ onFileAccepted }) {
                 resize="vertical"
               />{" "}
             </FormControl>
-            {/* <FormControl mt={4}>
+            <FormControl mt={4}>
             <FormLabel>Upload Image</FormLabel>
               <Center
                 p={20}
@@ -172,7 +184,7 @@ export default function CreateBlog({ onFileAccepted }) {
                 <Icon as={AiFillFileAdd} mr={2} />
                 <p>{dropText}</p>
               </Center>
-            </FormControl> */}
+            </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button mr={3} colorScheme="red" onClick={onClose}>
