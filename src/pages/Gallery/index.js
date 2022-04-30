@@ -91,25 +91,27 @@ function ImageWithModal({ item }: NavItemProps) {
         />
 
         <Box p="3">
-          <Box display="flex" alignItems="baseline">
+          <Box display="flex" alignItems="stretch">
             <Text>Posted by {item.users.name}</Text>
-            <FiHeart
-              w={10}
-              h={10}
-              color="red.400"
-              style={{ marginLeft: "auto" }}
-            />
-            {item.users.email == user.email ||
-            user.email == process.env.REACT_APP_ADMIN_USER ? (
-              <FiTrash
+            <Box display="flex" marginLeft="auto">
+              <FiHeart
                 w={10}
                 h={10}
-                color="red"
+                color="red.400"
                 style={{ marginLeft: "auto" }}
               />
-            ) : (
-              ""
-            )}
+              {item.users.email == user.email ||
+              user.email == process.env.REACT_APP_ADMIN_USER ? (
+                <FiTrash
+                  w={10}
+                  h={10}
+                  color="red"
+                  style={{marginLeft:"30px"}}
+                />
+              ) : (
+                ""
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>{" "}

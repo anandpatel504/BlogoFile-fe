@@ -99,7 +99,7 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
         <Text>{new Date(props.blog.created_at).toLocaleDateString()}</Text>
       </HStack>
       <div style={{ marginLeft: "auto" }} alignItems="center">
-        {(props.blog.user_id == props.blog.c_user_id || user.email == "blogofileadmin@gmail.com") ? (
+        {(props.blog.user_id == props.blog.c_user_id || user.email == process.env.REACT_APP_ADMIN_USER) ? (
           <>
             <UpdateBlog blog={props.blog} />
             <Button
