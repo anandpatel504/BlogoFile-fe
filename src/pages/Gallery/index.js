@@ -14,7 +14,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { PhoneIcon, AddIcon, BellIcon } from "@chakra-ui/icons";
-import { FiImage, FiHeart } from "react-icons/fi";
+import { FiImage, FiHeart, FiTrash } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { reactLocalStorage } from "reactjs-localstorage";
@@ -35,7 +35,7 @@ export default function Gallery() {
       .then((res) => {
         console.log(res);
         if (res.data.status == "success") {
-          setImages(res.data.data)
+          setImages(res.data.data);
         } else {
           toast({
             title: res.data.message,
@@ -68,6 +68,8 @@ export default function Gallery() {
 
 function ImageWithModal({ item }: NavItemProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const user = reactLocalStorage.getObject("user");
+  console.log(item);
   return (
     <>
       <Box
@@ -97,6 +99,17 @@ function ImageWithModal({ item }: NavItemProps) {
               color="red.400"
               style={{ marginLeft: "auto" }}
             />
+            {item.users.email == user.email ||
+            user.email == process.env.REACT_APP_ADMIN_USER ? (
+              <FiTrash
+                w={10}
+                h={10}
+                color="red"
+                style={{ marginLeft: "auto" }}
+              />
+            ) : (
+              ""
+            )}
           </Box>
         </Box>
       </Box>{" "}

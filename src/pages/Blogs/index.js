@@ -39,9 +39,9 @@ import { AiFillFileAdd } from "react-icons/ai";
 
 export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
   const toast = useToast();
+  const user = reactLocalStorage.getObject("user");
+  console.log(user);
   const onDeleteBlog = (e) => {
-    console.log(e);
-    const user = reactLocalStorage.getObject("user");
     const id = e.target.id;
     console.log(e.target);
     if (!id) {
@@ -99,7 +99,7 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
         <Text>{new Date(props.blog.created_at).toLocaleDateString()}</Text>
       </HStack>
       <div style={{ marginLeft: "auto" }} alignItems="center">
-        {props.blog.user_id == props.blog.c_user_id ? (
+        {(props.blog.user_id == props.blog.c_user_id || user.email == "blogofileadmin@gmail.com") ? (
           <>
             <UpdateBlog blog={props.blog} />
             <Button
