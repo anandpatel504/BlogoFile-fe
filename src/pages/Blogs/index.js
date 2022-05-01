@@ -41,9 +41,8 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
   const toast = useToast();
   const user = reactLocalStorage.getObject("user");
   console.log(user);
-  const onDeleteBlog = (e) => {
-    const id = e.target.id;
-    console.log(e.target);
+  const onDeleteBlog = (id) => {
+    console.log(id, "ksdjfkhskjh");
     if (!id) {
       return toast({
         title: "Invalid blog ID.",
@@ -57,7 +56,7 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
     axios
       .delete(
         process.env.REACT_APP_BACKEND_API_URL +
-          "/deleteBlog/" +
+          "/blog/" +
           id +
           "?token=" +
           user.token
@@ -89,9 +88,65 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
         console.log(err);
       });
   };
+  const updateLikeDislike = (id, like) => {
+    axios
+      .post(
+        process.env.REACT_APP_BACKEND_API_URL +
+          "/blogLikeDislike" +
+          "?token=" +
+          user.token,
+        { blog_id: id, like: like }
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.status == "success") {
+          toast({
+            title: "Blog deleted successfully!",
+            status: "success",
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+          window.location.reload();
+        } else {
+          toast({
+            title: res.data.message,
+            status: "error",
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const getIfLiked = (item) => {
+    console.log(item, 'klsdjflksjdklfjksjdfslfdjklsjdlj');
+    const likes = item.blogsLikeDislike;
+    if (likes.length == 0) {
+      return false;
+    } else {
+      const u_likes = likes.filter((i) => i.user_id == item.c_user_id);
+      console.log(u_likes, "klsdjflksjlj");
+      if (u_likes.length > 0) {
+        return u_likes[0].like;
+      }
+    }
+    return false;
+  };
   console.log(props.blog);
   return (
-    <HStack marginTop="2" spacing="2" display="flex" flexDirection={{ base: "column", sm: "row" }} alignItems="center">
+    <HStack
+      marginTop="2"
+      spacing="2"
+      display="flex"
+      flexDirection={{ base: "column", sm: "row" }}
+      alignItems="center"
+    >
       <HStack marginTop="2" spacing="2" alignItems="center">
         <Avatar size="sm" name={props.blog.author} />
         <Text fontWeight="medium">{props.blog.author}</Text>
@@ -99,12 +154,13 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
         <Text>{new Date(props.blog.created_at).toLocaleDateString()}</Text>
       </HStack>
       <div style={{ marginLeft: "auto" }} alignItems="center">
-        {(props.blog.user_id == props.blog.c_user_id || user.email == process.env.REACT_APP_ADMIN_USER) ? (
+        {props.blog.user_id == props.blog.c_user_id ||
+        user.email == process.env.REACT_APP_ADMIN_USER ? (
           <>
             <UpdateBlog blog={props.blog} />
             <Button
               id={props.blog.id}
-              onClick={onDeleteBlog}
+              onClick={() => onDeleteBlog(props.blog.id)}
               colorScheme="red"
               variant="ghost"
             >
@@ -115,12 +171,11 @@ export const BlogAuthor: React.FC<BlogAuthorProps> = (props) => {
           ""
         )}
         <Button
-          id={props.blog.id}
-          onClick={onDeleteBlog}
+          onClick={() => updateLikeDislike(props.blog.id,getIfLiked(props.blog) ? false : true )}
           colorScheme="white"
           variant="ghost"
         >
-          <FaHeart />
+          <FaHeart color={getIfLiked(props.blog) ? "red" : ""} />
         </Button>
       </div>
     </HStack>
@@ -196,9 +251,19 @@ const UpdateBlog: React.FC<BlogAuthorProps> = (props) => {
     title: "",
     description: "",
   });
+  const [image, setImage] = useState();
+  const [isloading, setLoading] = useState(false);
 
   const toast = useToast();
-  const onDrop = useCallback();
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      // onFileAccepted(acceptedFiles[0]);
+      console.log(acceptedFiles);
+      setImage(acceptedFiles[0]);
+    },
+    // [onFileAccepted]
+    []
+  );
   // (acceptedFiles) => {
   //   onFileAccepted(acceptedFiles[0]);
   // },
@@ -229,8 +294,12 @@ const UpdateBlog: React.FC<BlogAuthorProps> = (props) => {
     setValues({ title: props.blog.title, description: props.blog.description });
   }, []);
   const onBlogUpdate = () => {
-    console.log(values);
+    setLoading(true);
     const user = reactLocalStorage.getObject("user");
+    const data = new FormData();
+    data.append("myimage", image);
+    data.append("title", values.title);
+    data.append("description", values.description);
     axios
       .put(
         process.env.REACT_APP_BACKEND_API_URL +
@@ -238,10 +307,7 @@ const UpdateBlog: React.FC<BlogAuthorProps> = (props) => {
           props.blog.id +
           "?token=" +
           user.token,
-        {
-          title: values.title,
-          description: values.description,
-        }
+        data
       )
       .then((res) => {
         console.log(res);
@@ -326,7 +392,14 @@ const UpdateBlog: React.FC<BlogAuthorProps> = (props) => {
               >
                 <input {...getInputProps()} />
                 <Icon as={AiFillFileAdd} mr={2} />
-                <p>{dropText}</p>
+                <p>
+                  {image
+                    ? image?.name +
+                      " | " +
+                      (image?.size / 1000000).toFixed(3) +
+                      " MB"
+                    : dropText}
+                </p>
               </Center>
             </FormControl>
           </ModalBody>
@@ -334,7 +407,11 @@ const UpdateBlog: React.FC<BlogAuthorProps> = (props) => {
             <Button mr={3} colorScheme="red" onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="green" onClick={onBlogUpdate}>
+            <Button
+              isLoading={isloading}
+              colorScheme="green"
+              onClick={onBlogUpdate}
+            >
               Update
             </Button>
           </ModalFooter>
@@ -349,11 +426,10 @@ const ArticleList = () => {
   useEffect(() => {
     const user = reactLocalStorage.getObject("user");
     axios
-      .get(
-        process.env.REACT_APP_BACKEND_API_URL + "/getAll?token=" + user.token
-      )
+      .get(process.env.REACT_APP_BACKEND_API_URL + "/blogs?token=" + user.token)
       .then((res) => {
-        set_s_blogs(res.data.reverse());
+        console.log(res.data.data);
+        set_s_blogs(res.data.data?.reverse());
         console.log(res);
       });
   }, []);
@@ -363,7 +439,7 @@ const ArticleList = () => {
       <Blog
         title={item.title}
         description={item.description}
-        image={"https://neilpatel.com/wp-content/uploads/2018/10/blog.jpg"}
+        image={item.url}
         author={<BlogAuthor blog={item} />}
       />
     );

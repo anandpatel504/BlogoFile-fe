@@ -28,6 +28,9 @@ import { FiPlus } from "react-icons/fi";
 import React, { useState } from "react";
 import { reactLocalStorage } from "reactjs-localstorage";
 export default function CreateBlog({ onFileAccepted }) {
+  const [image, setImage] = useState();
+  const [isloading, setLoading] = useState(false);
+
   const [values, setValues] = useState({
     title: "",
     description: "",
@@ -39,9 +42,12 @@ export default function CreateBlog({ onFileAccepted }) {
   };
   const onDrop = useCallback(
     (acceptedFiles) => {
-      onFileAccepted(acceptedFiles[0]);
+      // onFileAccepted(acceptedFiles[0]);
+      console.log(acceptedFiles);
+      setImage(acceptedFiles[0]);
     },
-    [onFileAccepted]
+    // [onFileAccepted]
+    []
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -67,14 +73,32 @@ export default function CreateBlog({ onFileAccepted }) {
   );
 
   const onBlogCreate = () => {
+    const user = reactLocalStorage.getObject("user");
+
+    const data = new FormData();
+    data.append("myimage", image);
+    data.append("title", values.title);
+    data.append("description", values.description);
+    data.append("author", user.name);
+    if (!image) {
+      return toast({
+        title: "Select image to upload",
+        status: "error",
+        variant: "left-accent",
+        duration: 9000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+    }
     if (values.title && values.description) {
-    const user = reactLocalStorage.getObject("user")
+      setLoading(true)
       axios
-        .post(process.env.REACT_APP_BACKEND_API_URL + "/createBlog?token="+user.token, {
-          title: values.title,
-          description: values.description,
-          author: user.name
-        })
+        .post(
+          process.env.REACT_APP_BACKEND_API_URL +
+            "/createBlog?token=" +
+            user.token,
+          data
+        )
         .then((res) => {
           if (res.data.status == "success") {
             toast({
@@ -85,8 +109,8 @@ export default function CreateBlog({ onFileAccepted }) {
               isClosable: true,
               position: "bottom-right",
             });
-            window.location.reload()
-          } else{
+            window.location.reload();
+          } else {
             toast({
               title: res.data.message,
               status: "error",
@@ -120,7 +144,7 @@ export default function CreateBlog({ onFileAccepted }) {
       <Button
         leftIcon={<FiPlus />}
         overflow="hidden"
-        display={{base: "none", md: "block"}}
+        display={{ base: "none", md: "block" }}
         onClick={() => {
           setOverlay(<OverlayOne />);
           onOpen();
@@ -131,13 +155,12 @@ export default function CreateBlog({ onFileAccepted }) {
       <Button
         leftIcon={<FiPlus />}
         overflow="hidden"
-        display={{base: "block", md: "none"}}
+        display={{ base: "block", md: "none" }}
         onClick={() => {
           setOverlay(<OverlayOne />);
           onOpen();
         }}
-      >
-      </Button>
+      ></Button>
       <Modal isCentered isOpen={isOpen} size="4xl" onClose={onClose}>
         {overlay}
         <ModalContent>
@@ -167,7 +190,7 @@ export default function CreateBlog({ onFileAccepted }) {
               />{" "}
             </FormControl>
             <FormControl mt={4}>
-            <FormLabel>Upload Image</FormLabel>
+              <FormLabel>Upload Image</FormLabel>
               <Center
                 p={20}
                 cursor="pointer"
@@ -181,7 +204,14 @@ export default function CreateBlog({ onFileAccepted }) {
               >
                 <input {...getInputProps()} />
                 <Icon as={AiFillFileAdd} mr={2} />
-                <p>{dropText}</p>
+                <p>
+                  {image
+                    ? image?.name +
+                      " | " +
+                      (image?.size / 1000000).toFixed(3) +
+                      " MB"
+                    : dropText}
+                </p>
               </Center>
             </FormControl>
           </ModalBody>
@@ -189,7 +219,7 @@ export default function CreateBlog({ onFileAccepted }) {
             <Button mr={3} colorScheme="red" onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="green" onClick={onBlogCreate}>
+            <Button isLoading={isloading} colorScheme="green" onClick={onBlogCreate}>
               Create
             </Button>
           </ModalFooter>
