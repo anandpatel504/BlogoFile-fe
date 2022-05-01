@@ -52,6 +52,35 @@ export default function Gallery() {
         console.log(err);
       });
   }, []);
+
+  const onLikePost = (id) => {
+    const user = reactLocalStorage.getObject("user");
+    axios
+      .get(
+        process.env.REACT_APP_BACKEND_API_URL +
+          "/photos" +
+          "?token=" +
+          user.token
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.status == "success") {
+          setImages(res.data.data);
+        } else {
+          toast({
+            title: res.data.message,
+            status: "error",
+            variant: "left-accent",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <div>
       <SimpleGrid
@@ -60,21 +89,21 @@ export default function Gallery() {
         spacing="20px"
       >
         {images.map((item) => {
-          return <ImageWithModal item={item} />;
+          return <ImageWithModal onLikePost={onLikePost} item={item} />;
         })}
       </SimpleGrid>
     </div>
   );
 }
 
-function ImageWithModal({ item }: NavItemProps) {
+function ImageWithModal({ item, onLikePost }: NavItemProps) {
   const toast = useToast();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = reactLocalStorage.getObject("user");
   console.log(item);
   const updateLikeDislike = (id, like) => {
-    console.log(like, 'lksjdflksjdlj')
+    console.log(like, "lksjdflksjdlj");
     axios
       .post(
         process.env.REACT_APP_BACKEND_API_URL +
@@ -87,7 +116,7 @@ function ImageWithModal({ item }: NavItemProps) {
         console.log(res);
         if (res.data.status == "success") {
           console.log("hello world");
-          window.location.reload()
+          onLikePost(id);
         } else {
           console.log(res);
           toast({
@@ -154,19 +183,19 @@ function ImageWithModal({ item }: NavItemProps) {
       });
   };
 
-  const getIfLiked = (item)=>{
-    const likes = item.galleryImageLikeDislike
-    if (likes.length==0){
-      return false
-    }else{
-      const u_likes = likes.filter((i)=>i.user_id==item.c_user_id)
-      console.log(u_likes, 'klsdjflksjlj');
-      if (u_likes.length>0){
-        return u_likes[0].like
+  const getIfLiked = (item) => {
+    const likes = item.galleryImageLikeDislike;
+    if (likes.length == 0) {
+      return false;
+    } else {
+      const u_likes = likes.filter((i) => i.user_id == item.c_user_id);
+      console.log(u_likes, "klsdjflksjlj");
+      if (u_likes.length > 0) {
+        return u_likes[0].like;
       }
     }
-    return false
-  }
+    return false;
+  };
 
   return (
     <>
@@ -186,25 +215,20 @@ function ImageWithModal({ item }: NavItemProps) {
 
         <Box p="3">
           <Box display="flex" alignItems="stretch">
-            <Text>Posted by {item.users.name}</Text>
+            <Text>Posted by {item.users[0].name}</Text>
             <Box display="flex" marginLeft="auto">
               <FaHeart
                 onClick={() =>
-                  updateLikeDislike(
-                    item.id,
-                    getIfLiked(item)?false:true
-                  )
+                  updateLikeDislike(item.id, getIfLiked(item) ? false : true)
                 }
-                color={
-                  getIfLiked(item)?"red":""
-                }
+                color={getIfLiked(item) ? "red" : ""}
                 style={{ marginLeft: "auto" }}
               />
               {item.users[0].email == user.email ||
               user.email == process.env.REACT_APP_ADMIN_USER ? (
                 <FiTrash
                   w={10}
-                  onClick = {()=>onDeletePhoto(item.id)}
+                  onClick={() => onDeletePhoto(item.id)}
                   h={10}
                   color="red"
                   style={{ marginLeft: "30px" }}
