@@ -10,6 +10,28 @@ import {
 
 const testimonials = [
   {
+    name: "Anand Patel",
+    role: "FullStack Developer",
+    content:
+      "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+    avatar:
+      "https://avatars.githubusercontent.com/u/44016225?v=4",
+  },
+  {
+    name: "Pratik Deshmukh",
+    role: "FullStack Developer",
+    content:
+    "Everybody in this country should learn to program a computer because it teaches you how to think.",
+     avatar: "https://avatars.githubusercontent.com/u/44018192?v=4",
+  },
+  {
+    name: "Anmol Mehra",
+    role: "FullStack Developer",
+    content:
+      "Perfection is achieved not when there is nothing more to add, but rather when there is nothing more to take away.",
+     avatar: "https://avatars.githubusercontent.com/u/70458652?v=4",
+  },
+    {
     name: "Anjali Prajapati",
     role: "Student",
     content:
