@@ -27,25 +27,25 @@ import {reactLocalStorage} from 'reactjs-localstorage';
 
 const avatars = [
   {
-    name: "Anjali Prajapati",
-    url: "https://avatars.githubusercontent.com/u/100531680?v=4",
-    githubUrl: "https://github.com/iamanjaliprajapati",
+    name: "Anand Patel",
+    url: "https://avatars.githubusercontent.com/u/44016225?v=4",
+    githubUrl: "https://github.com/anandpatel504",
   },
   {
-   name: "Geetika Meena",
-   url: "https://avatars.githubusercontent.com/u/101466812?v=4",
-    githubUrl: "https://github.com/geetikameena21",
+   name: "Pratik Deshmukh",
+   url: "https://avatars.githubusercontent.com/u/44018192?v=4",
+    githubUrl: "https://github.com/pratikdeshmukh2004",
   },
   {
-    name: "Riya Rathi",
-    url: "https://avatars.githubusercontent.com/u/101453687?v=4",
-    githubUrl: "https://github.com/iamriyarathi",
+    name: "Anmol Mehra",
+    url: "https://avatars.githubusercontent.com/u/70458652?v=4",
+    githubUrl: "https://github.com/iamanmolmehra",
   },
-  {
-    name: "Tannu Rawat",
-    url: "https://avatars.githubusercontent.com/u/101473171?v=4",
-    githubUrl: "https://github.com/tannurawat",
-  },
+//   {
+//     name: "Tannu Rawat",
+//     url: "https://avatars.githubusercontent.com/u/101473171?v=4",
+//     githubUrl: "https://github.com/tannurawat",
+//   },
 ];
 
 export default function Signup() {
