@@ -18,125 +18,125 @@ import {
   InputRightElement,
   Checkbox,
   useToast,
-  Center
+  Center,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import axios from "axios"
+import axios from "axios";
 import { Link } from "react-router-dom";
-import { reactLocalStorage } from 'reactjs-localstorage';
+import { reactLocalStorage } from "reactjs-localstorage";
 import { ColorModeSwitcher } from "../../components/DarkTheme/index";
 import { Redirect } from "react-router-dom";
-import { GoogleLogin } from 'react-google-login';
-import { FcGoogle } from 'react-icons/fc';
-
+import { GoogleLogin } from "react-google-login";
+import { FcGoogle } from "react-icons/fc";
 const avatars = [
   {
-    name: "Anjali Prajapati",
-    url: "https://avatars.githubusercontent.com/u/100531680?v=4",
-    githubUrl: "https://github.com/iamanjaliprajapati",
+    name: "Anand Patel",
+    url: "https://avatars.githubusercontent.com/u/44016225?v=4",
+    githubUrl: "https://github.com/anandpatel504",
   },
   {
-   name: "Geetika Meena",
-   url: "https://avatars.githubusercontent.com/u/101466812?v=4",
-    githubUrl: "https://github.com/geetikameena21",
+    name: "Pratik Deshmukh",
+    url: "https://avatars.githubusercontent.com/u/44018192?v=4",
+    githubUrl: "https://github.com/pratikdeshmukh2004",
   },
   {
-    name: "Riya Rathi",
-    url: "https://avatars.githubusercontent.com/u/101453687?v=4",
-    githubUrl: "https://github.com/iamriyarathi",
-  },
-  {
-    name: "Tannu Rawat",
-    url: "https://avatars.githubusercontent.com/u/101473171?v=4",
-    githubUrl: "https://github.com/tannurawat",
+    name: "Anmol Mehra",
+    url: "https://avatars.githubusercontent.com/u/70458652?v=4",
+    githubUrl: "https://github.com/iamanmolmehra",
   },
 ];
 
 export default function Login() {
-  const [redirectUrl, setRedirectUrl] = useState("")
+  const [redirectUrl, setRedirectUrl] = useState("");
   useEffect(() => {
-
-    const user = reactLocalStorage.getObject("user")
+    const user = reactLocalStorage.getObject("user");
     if (user.token) {
-      setRedirectUrl("/")
+      setRedirectUrl("/");
     }
-  })
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [values, setValues] = useState({
     email: "",
     password: "",
   });
-  const [isloading, setLoading] = useState(false)
-  const toast = useToast()
+  const [isloading, setLoading] = useState(false);
+  const toast = useToast();
   const changeHandler = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   const onLogin = (event) => {
-    toast.closeAll()
+    toast.closeAll();
     event.preventDefault();
     if (values.email == "" || values.password == "") {
       toast({
         title: "Invalid Details.",
         description: "Input fields can't be empty.",
-        status: 'error',
+        status: "error",
         variant: "left-accent",
         duration: 9000,
         isClosable: true,
-        position: 'bottom-right'
-      })
+        position: "bottom-right",
+      });
       return;
     }
-    setLoading(true)
-    axios.post(process.env.REACT_APP_BACKEND_API_URL + "/login", { "email": values.email, "password": values.password })
+    setLoading(true);
+    axios
+      .post(process.env.REACT_APP_BACKEND_API_URL + "/login", {
+        email: values.email,
+        password: values.password,
+      })
       .then((res) => {
         if (res.data.status == "success") {
-          reactLocalStorage.setObject("user", { 'token': res.data.token, 'name': res.data.name, "email": values.email})
+          reactLocalStorage.setObject("user", {
+            token: res.data.token,
+            name: res.data.name,
+            email: values.email,
+          });
           toast({
             title: "Login Successfully!",
             description: `Welcome back ${res.data.name}`,
-            status: 'success',
+            status: "success",
             variant: "left-accent",
             duration: 9000,
             isClosable: true,
-            position: 'bottom-right'
-          })
-          setRedirectUrl('/')
-        } else if (res.data.status == 'error') {
-          setLoading(false)
+            position: "bottom-right",
+          });
+          setRedirectUrl("/");
+        } else if (res.data.status == "error") {
+          setLoading(false);
           toast({
             title: res.data.message,
-            status: 'error',
+            status: "error",
             variant: "left-accent",
             duration: 9000,
             isClosable: true,
-            position: 'bottom-right'
-          })
+            position: "bottom-right",
+          });
         }
       })
       .catch((err) => {
         console.log(err);
-      })
-
-  }
-  const onGoogleLogin = (event)=>{
-    const name = event.profileObj.givenName+" " +event.profileObj.familyName
+      });
+  };
+  const onGoogleLogin = (event) => {
+    const name = event.profileObj.givenName + " " + event.profileObj.familyName;
     toast({
       title: "Login Successfully",
       description: `Welcome back ${name}`,
-      status: 'success',
+      status: "success",
       variant: "left-accent",
       duration: 9000,
       isClosable: true,
-      position: 'bottom-right'
-    })
-    reactLocalStorage.setObject("user", { 'token': event.tokenId, 'name': name })
-    setRedirectUrl('/')
-  }
+      position: "bottom-right",
+    });
+    reactLocalStorage.setObject("user", { token: event.tokenId, name: name });
+    setRedirectUrl("/");
+  };
   return (
     <Box position={"relative"}>
-      {redirectUrl !== "" ? (<Redirect to={redirectUrl} />) : ""}
+      {redirectUrl !== "" ? <Redirect to={redirectUrl} /> : ""}
       <ColorModeSwitcher />
       <Container
         as={SimpleGrid}
