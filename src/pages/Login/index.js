@@ -316,7 +316,7 @@ export default function Login() {
             >
               Sign in
             </Button>
-            <GoogleLogin
+            {/* <GoogleLogin
               clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
               render={renderProps => (
                 <Button
@@ -347,7 +347,7 @@ export default function Login() {
               }}
               cookiePolicy={'single_host_origin'}
             />
-            
+             */}
           </Box>
           <Stack pt={1}>
             <Text
